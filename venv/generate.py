@@ -1,9 +1,11 @@
+"""
 import requests
 import openai
 
 # Set the OpenAI API key
-openai.api_key = "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"
-headers = {'Authorization': 'Bearer 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'} #authentication for openAI key
+openai.api_key = "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"
+# headers = {'Authorization': 'Bearer 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'} #authentication for openAI key
+
 
 def split_text(text):
     max_chunk_size = 2048
@@ -19,6 +21,7 @@ def split_text(text):
         chunks.append(current_chunk.strip())
     return chunks
 
+
 def generate_summary(text):
     input_chunks = text
     output_chunks = []
@@ -27,23 +30,68 @@ def generate_summary(text):
             engine="davinci",
             prompt=(f"Please summarize the following text:\n{chunk}\n\nSummary:"),
             temperature=0.5,
-            max_tokens=1024,
-            n = 1,
-            stop = None
+            max_tokens=500,
+            n=1,
+            stop=None,
+        )
+        summary = response.choices[0].text.strip()
+        output_chunks.append(summary)
+    return " ".join(output_chunks)
+
+
+def main():
+    url = "https://www.bbc.com/news/world-67418110"
+    response = requests.get(url)
+    text = response.text
+    # print(text)
+    text2 = split_text(text)
+    # print(text2)
+    text3 = generate_summary(text2)
+    print(text3)
+
+
+main()
+
+"""
+import requests
+import openai
+import os
+
+# Set the OpenAI API key using an environment variable
+openai.api_key = "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"
+
+def split_text(text):
+    # Implement a more sophisticated text segmentation method if needed
+    # For example, you can use nltk.sent_tokenize() for sentence segmentation
+    return [text]
+
+def generate_summary(chunks):
+    output_chunks = []
+    for chunk in chunks:
+        response = openai.Completion.create(
+            engine="davinci",
+            prompt=(f"Please summarize the following text:\n{chunk}\n\nSummary:"),
+            temperature=0.5,
+            max_tokens=500,
+            n=1,
+            stop=None,
         )
         summary = response.choices[0].text.strip()
         output_chunks.append(summary)
     return " ".join(output_chunks)
 
 def main():
-    
     url = "https://www.bbc.com/news/world-67418110"
     response = requests.get(url)
-    text = response.text 
-    #print(text)
-    text2 = split_text(text)
-    #print(text2)
-    text3 = generate_summary(text2)
-    print(text3)
+    text = response.text
+
+    # Split text into chunks
+    text_chunks = split_text(text)
+
+    # Generate summary for each chunk
+    summary = generate_summary(text_chunks)
     
-main()
+    print(summary)
+
+if __name__ == "__main__":
+    main()

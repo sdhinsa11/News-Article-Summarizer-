@@ -3,7 +3,7 @@ import requests
 import openai
 
 # Set the OpenAI API key
-openai.api_key = "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"
+openai.api_key = "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"
 # headers = {'Authorization': 'Bearer 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'} #authentication for openAI key
 
 
@@ -49,8 +49,9 @@ def main():
     text3 = generate_summary(text2)
     print(text3)
 
-
-main()
+if __name__ == '__main__':
+    main()
+"""
 
 """
 import requests
@@ -58,7 +59,56 @@ import openai
 import os
 
 # Set the OpenAI API key using an environment variable
-openai.api_key = "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"
+openai.api_key = "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"
+
+
+def split_text(text):
+    # Implement a more sophisticated text segmentation method if needed
+    # For example, you can use nltk.sent_tokenize() for sentence segmentation
+    return [text]
+
+
+def generate_summary(chunks, max_tokens_per_chunk=30):
+    output_chunks = []
+    for chunk in chunks:
+        response = openai.Completion.create(
+            engine="davinci",
+            prompt=(f"Please summarize the following text:\n{chunk}\n\nSummary:"),
+            temperature=0.5,
+            max_tokens=max_tokens_per_chunk,
+            n=1,
+            stop=None,
+        )
+        summary = response.choices[0].text.strip()
+        output_chunks.append(summary)
+    return " ".join(output_chunks)
+
+
+
+def main():
+    url = "https://www.bbc.com/news/world-67418110"
+    response = requests.get(url)
+    text = response.text
+
+    # Split text into chunks
+    text_chunks = split_text(text)
+
+    # Generate summary for each chunk
+    summary = generate_summary(text_chunks)
+
+    print(summary)
+
+
+if __name__ == "__main__":
+    main()
+"""
+
+import requests
+import openai
+import os
+
+# Set the OpenAI API key using an environment variable
+openai.api_key = "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"
 
 def split_text(text):
     # Implement a more sophisticated text segmentation method if needed
@@ -71,7 +121,7 @@ def generate_summary(chunks):
         response = openai.Completion.create(
             engine="davinci",
             prompt=(f"Please summarize the following text:\n{chunk}\n\nSummary:"),
-            temperature=0.5,
+            temperature=0.3,
             max_tokens=500,
             n=1,
             stop=None,
@@ -81,16 +131,19 @@ def generate_summary(chunks):
     return " ".join(output_chunks)
 
 def main():
-    url = "https://www.bbc.com/news/world-67418110"
-    response = requests.get(url)
-    text = response.text
+    # Provide the text directly instead of fetching from a URL
+    input_text = """
+    The September 11 attacks, commonly known as 9/11,[d] were four coordinated Islamist suicide terrorist attacks carried out by al-Qaeda against the United States in 2001. That morning, 19 terrorists hijacked four commercial airliners scheduled to travel from the New England and Mid-Atlantic regions of the East Coast to California. The hijackers crashed the first two planes into the Twin Towers of the World Trade Center in New York City, two of the world's five tallest buildings at the time, and aimed the next two flights toward targets in or near Washington, D.C., in an attack on the nation's capital. The third team succeeded in striking the Pentagon, the headquarters of the U.S. Department of Defense in Arlington County, Virginia, while the fourth plane went down in rural Pennsylvania during a passenger revolt. The attacks killed nearly 3,000 people and instigated the multi-decade global war on terror.
+    """
 
     # Split text into chunks
-    text_chunks = split_text(text)
+    text_chunks = split_text(input_text)
+    #print(text_chunks)
 
     # Generate summary for each chunk
     summary = generate_summary(text_chunks)
-    
+
+    #print("here")
     print(summary)
 
 if __name__ == "__main__":

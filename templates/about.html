@@ -1,0 +1,18 @@
+<!-- templates/home.html -->
+
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1 class="center-text">Welcome to the Text Summarizer</h1>
+        <form action="{{ url_for('summarize') }}" method="post" class="center-form">
+            <label for="text_input">Enter Text:</label>
+            <br>
+            <textarea id="text_input" name="text_input" rows="10" cols="50" required></textarea>
+            <br>
+            <button type="submit">Summarize</button>
+        </form>
+    </div>
+{% endblock %}
